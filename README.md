@@ -1,5 +1,7 @@
 # BrickadiaAutoPainter
 
+![BrickadiaAutoPainter UI](https://i.imgur.com/jAxPSUR.png)
+
 This is an automatic painter for Brickadia. Simply give it a color palette file (`.bp`), an image, specify dimensions and corners,
 and it will automatically paint the image for you.
 
