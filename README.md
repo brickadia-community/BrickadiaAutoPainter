@@ -7,7 +7,7 @@ Only supports Windows.
 
 ## Installation
 
-Head to the [releases page](https://github.com/voximity/BrickadiaAutoPainter/releases) and download the latest executable.
+Head to the [releases page](https://github.com/brickadia-community/BrickadiaAutoPainter/releases) and download the latest executable.
 Instructions included in the program.
 
 ### Getting the palette
