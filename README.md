@@ -17,7 +17,7 @@ Instructions included in the program.
 Navigate to the server settings (ESC -> Edit Game) and click Advanced Settings on top. Click Edit Server Color Palette, then Presets in the top right.
 Click Save New Preset and give it a name. Finally, tab out of Brickadia, press `winkey + R` to open the Run menu, and enter the following:
 
-`%appdata%\..\local\brickadia\saved\presets\colorpalettes`
+`%localappdata%\brickadia\saved\presets\colorpalettes`
 
 This will open a File Explorer window in your color palette directory. Find the palette you just saved (ending in `.bp`) and copy it somewhere else for use
 with the Auto Painter, or navigate to the same folder with the Auto Painter.
