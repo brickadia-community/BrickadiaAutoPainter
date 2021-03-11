@@ -38,6 +38,7 @@ namespace BrickadiaAutoPainter {
 				ColorPlaceDelay = advancedSettingsForm.PixelPaintDelay,
 				AfterColorPickDelay = advancedSettingsForm.ColorSwitchedDelay,
 				ColorSpace = advancedSettingsForm.ColorSpace,
+				SkipColors = advancedSettingsForm.SkipColors,
 
 				Width = (int)numBricksX.Value,
 				Height = (int)numBricksY.Value,

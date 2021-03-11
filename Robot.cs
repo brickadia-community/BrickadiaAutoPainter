@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -15,6 +16,8 @@ namespace BrickadiaAutoPainter {
 		public int Width;
 		public int Height;
 		public ColorSpaceSetting ColorSpace;
+		public SkipColorsSetting SkipColors;
+
 		public (int, int)? TopLeft;
 		public (int, int)? TopRight;
 		public (int, int)? BottomLeft;
@@ -91,7 +94,11 @@ namespace BrickadiaAutoPainter {
 			using Bitmap bitmap = new Bitmap(Image, new Size(Width, Height));
 			for (int iy = 0; iy < bitmap.Height; iy++) {
 				for (int ix = 0; ix < bitmap.Width; ix++) {
-					BrickadiaColor color = new BrickadiaColor(bitmap.GetPixel(ix, iy));
+					Color rawColor = bitmap.GetPixel(ix, iy);
+					BrickadiaColor color = new BrickadiaColor(rawColor);
+
+					if (SkipColors == SkipColorsSetting.Transparent && rawColor.A > 127)
+						continue;
 
 					(int, int) palettePos = Palette.ClosestColorPalettePosition(color, ColorSpace);
 
@@ -107,6 +114,15 @@ namespace BrickadiaAutoPainter {
 				}
 			}
 
+			// handle skipping most frequent color
+			(int, int) skippedColor = (0, 0);
+			if (SkipColors == SkipColorsSetting.MostFrequent) {
+				var pairsList = palettePixelPair.ToList();
+				pairsList.Sort((a, b) => b.Value.Count - a.Value.Count);
+				palettePixelPair.Remove(pairsList.First().Key);
+				skippedColor = pairsList.First().Key;
+			}
+
 			foreach (KeyValuePair<(int, int), List<(int, int)>> pair in palettePixelPair) {
 				ChangePaletteColor((paletteX, paletteY), pair.Key);
 				paletteX = pair.Key.Item1;
@@ -120,6 +136,9 @@ namespace BrickadiaAutoPainter {
 					Thread.Sleep(ColorPlaceDelay);
 				}
 			}
+
+			if (SkipColors == SkipColorsSetting.MostFrequent)
+				ChangePaletteColor((paletteX, paletteY), skippedColor);
 		}
 	}
 }

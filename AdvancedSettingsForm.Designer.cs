@@ -33,6 +33,9 @@ namespace BrickadiaAutoPainter {
 			this.dropdownColorSpace = new System.Windows.Forms.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.okButton = new System.Windows.Forms.Button();
+			this.dropdownSkipColors = new System.Windows.Forms.ComboBox();
+			this.label5 = new System.Windows.Forms.Label();
+			this.label6 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.boxColorSwitchDelay)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.boxColorSwitchedDelay)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.boxPixelPaintDelay)).BeginInit();
@@ -125,7 +128,7 @@ namespace BrickadiaAutoPainter {
             "Oklab"});
 			this.dropdownColorSpace.Location = new System.Drawing.Point(170, 98);
 			this.dropdownColorSpace.Name = "dropdownColorSpace";
-			this.dropdownColorSpace.Size = new System.Drawing.Size(121, 23);
+			this.dropdownColorSpace.Size = new System.Drawing.Size(165, 23);
 			this.dropdownColorSpace.TabIndex = 6;
 			// 
 			// label4
@@ -141,19 +144,55 @@ namespace BrickadiaAutoPainter {
 			// 
 			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.okButton.Location = new System.Drawing.Point(122, 164);
+			this.okButton.Location = new System.Drawing.Point(124, 207);
 			this.okButton.Name = "okButton";
-			this.okButton.Size = new System.Drawing.Size(75, 23);
+			this.okButton.Size = new System.Drawing.Size(116, 23);
 			this.okButton.TabIndex = 8;
 			this.okButton.Text = "OK";
 			this.okButton.UseVisualStyleBackColor = true;
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
+			// dropdownSkipColors
+			// 
+			this.dropdownSkipColors.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.dropdownSkipColors.FormattingEnabled = true;
+			this.dropdownSkipColors.Items.AddRange(new object[] {
+            "Skip none",
+            "Skip most frequent",
+            "Skip transparent"});
+			this.dropdownSkipColors.Location = new System.Drawing.Point(170, 127);
+			this.dropdownSkipColors.Name = "dropdownSkipColors";
+			this.dropdownSkipColors.Size = new System.Drawing.Size(165, 23);
+			this.dropdownSkipColors.TabIndex = 9;
+			this.dropdownSkipColors.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(13, 130);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(111, 15);
+			this.label5.TabIndex = 10;
+			this.label5.Text = "Skip painting colors";
+			// 
+			// label6
+			// 
+			this.label6.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+			this.label6.Location = new System.Drawing.Point(13, 153);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(322, 31);
+			this.label6.TabIndex = 11;
+			this.label6.Text = "If skip colors is set to most frequent, the most frequent color will be switched " +
+    "to after painting finishes.";
+			// 
 			// AdvancedSettingsForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(306, 199);
+			this.ClientSize = new System.Drawing.Size(347, 242);
+			this.Controls.Add(this.label6);
+			this.Controls.Add(this.label5);
+			this.Controls.Add(this.dropdownSkipColors);
 			this.Controls.Add(this.okButton);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.dropdownColorSpace);
@@ -191,5 +230,8 @@ namespace BrickadiaAutoPainter {
 		private System.Windows.Forms.ComboBox dropdownColorSpace;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Button okButton;
+		private System.Windows.Forms.ComboBox dropdownSkipColors;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.Label label6;
 	}
 }
