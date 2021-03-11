@@ -223,10 +223,6 @@ namespace BrickadiaAutoPainter {
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.NumericUpDown boxPixelPaintDelay;
 		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.NumericUpDown boxPixelPa;
-		private System.Windows.Forms.NumericUpDown intDelay;
-		private System.Windows.Forms.NumericUpDown boxPixe;
-		private System.Windows.Forms.NumericUpDown boxPixel;
 		private System.Windows.Forms.ComboBox dropdownColorSpace;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Button okButton;
