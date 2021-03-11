@@ -6,10 +6,6 @@ using System.Threading;
 
 namespace BrickadiaAutoPainter {
 	class Robot : IDisposable {
-		private static double lerp(double a, double b, double c) => a + (b - a) * c;
-		private static double blerp(double c00, double c10, double c01, double c11, double tx, double ty) =>
-			lerp(lerp(c00, c10, tx), lerp(c01, c11, tx), ty);
-
 		public IntPtr Window;
 		public int ColorPlaceDelay;
 		public int AfterColorPickDelay;
@@ -91,6 +87,7 @@ namespace BrickadiaAutoPainter {
 
 			Dictionary<(int, int), List<(int, int)>> palettePixelPair = new Dictionary<(int, int), List<(int, int)>>();
 
+			Perspective perspective = new Perspective(topLeft, topRight, bottomLeft, bottomRight);
 			using Bitmap bitmap = new Bitmap(Image, new Size(Width, Height));
 			for (int iy = 0; iy < bitmap.Height; iy++) {
 				for (int ix = 0; ix < bitmap.Width; ix++) {
@@ -99,15 +96,14 @@ namespace BrickadiaAutoPainter {
 					(int, int) palettePos = Palette.ClosestColorPalettePosition(color, ColorSpace);
 
 					double tx = ix / (double)(Width - 1);
-					double ty = iy / (double)(Width - 1);
+					double ty = iy / (double)(Height - 1);
 
-					int px = (int)Math.Round(blerp(topLeft.Item1, topRight.Item1, bottomLeft.Item1, bottomRight.Item1, tx, ty));
-					int py = (int)Math.Round(blerp(topLeft.Item2, topRight.Item2, bottomLeft.Item2, bottomRight.Item2, tx, ty));
+					(int, int) pxy = perspective.PointOn(tx, ty);
 
 					if (!palettePixelPair.ContainsKey(palettePos))
-						palettePixelPair[palettePos] = new List<(int, int)> { (px, py) };
+						palettePixelPair[palettePos] = new List<(int, int)> { pxy };
 					else
-						palettePixelPair[palettePos].Add((px, py));
+						palettePixelPair[palettePos].Add(pxy);
 				}
 			}
 
