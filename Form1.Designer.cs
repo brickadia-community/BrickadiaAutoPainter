@@ -493,8 +493,6 @@ namespace BrickadiaAutoPainter {
 		private System.Windows.Forms.Label captureTopRightLabel;
 		private System.Windows.Forms.Button captureTopRight;
 		private System.Windows.Forms.Label label12;
-		private System.Windows.Forms.Button captu;
-		private System.Windows.Forms.Button ure;
 		private System.Windows.Forms.Label captureBottomLeftLabel;
 		private System.Windows.Forms.Button captureBottomLeft;
 		private System.Windows.Forms.Label label13;
@@ -506,10 +504,7 @@ namespace BrickadiaAutoPainter {
 		private System.Windows.Forms.Label label15;
 		private System.Windows.Forms.OpenFileDialog imageFile;
 		private System.Windows.Forms.Button previewButton;
-		private System.Windows.Forms.Button iewButt;
-		private System.Windows.Forms.PictureBox Box;
 		private System.Windows.Forms.Button advancedSettingsButton;
-		private System.Windows.Forms.Button advanced;
 	}
 }
 
