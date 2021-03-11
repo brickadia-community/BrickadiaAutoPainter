@@ -22,17 +22,23 @@ namespace BrickadiaAutoPainter {
 		private (int, int)? bottomLeftPos;
 		private (int, int)? bottomRightPos;
 
+		private AdvancedSettingsForm advancedSettingsForm;
+
 		public Form1() {
 			InitializeComponent();
+
+			advancedSettingsForm = new AdvancedSettingsForm();
 		}
 
 		private Robot createRobot() {
 			PresetColorPaletteEntry entry = JsonConvert.DeserializeObject<PresetColorPaletteEntry>(File.ReadAllText(colorPaletteFile.FileName));
 
 			return new Robot {
-				ColorChangeDelay = 1000 / 40,
-				ColorPlaceDelay = 1000 / 40,
-				AfterColorPickDelay = 240,
+				ColorChangeDelay = advancedSettingsForm.ColorSwitchDelay,
+				ColorPlaceDelay = advancedSettingsForm.PixelPaintDelay,
+				AfterColorPickDelay = advancedSettingsForm.ColorSwitchedDelay,
+				ColorSpace = advancedSettingsForm.ColorSpace,
+
 				Width = (int)numBricksX.Value,
 				Height = (int)numBricksY.Value,
 				Image = new Bitmap(imageFile.FileName),
@@ -120,6 +126,10 @@ namespace BrickadiaAutoPainter {
 			robot.Paint();
 			Thread.Sleep(500);
 			WindowState = FormWindowState.Normal;
+		}
+
+		private void advancedSettingsButton_Click(object sender, EventArgs e) {
+			advancedSettingsForm.ShowDialog();
 		}
 	}
 }

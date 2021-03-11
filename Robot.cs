@@ -18,6 +18,7 @@ namespace BrickadiaAutoPainter {
 		public Bitmap Image;
 		public int Width;
 		public int Height;
+		public ColorSpaceSetting ColorSpace;
 		public (int, int)? TopLeft;
 		public (int, int)? TopRight;
 		public (int, int)? BottomLeft;
@@ -76,7 +77,7 @@ namespace BrickadiaAutoPainter {
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width; x++) {
 					BrickadiaColor pixel = new BrickadiaColor(preview.GetPixel(x, y));
-					preview.SetPixel(x, y, Palette.ClosestColor(pixel).ToColor());
+					preview.SetPixel(x, y, Palette.ClosestColor(pixel, ColorSpace).ToColor());
 				}
 			}
 			return preview;
@@ -95,7 +96,7 @@ namespace BrickadiaAutoPainter {
 				for (int ix = 0; ix < bitmap.Width; ix++) {
 					BrickadiaColor color = new BrickadiaColor(bitmap.GetPixel(ix, iy));
 
-					(int, int) palettePos = Palette.ClosestColorPalettePosition(color);
+					(int, int) palettePos = Palette.ClosestColorPalettePosition(color, ColorSpace);
 
 					double tx = ix / (double)(Width - 1);
 					double ty = iy / (double)(Width - 1);

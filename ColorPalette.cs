@@ -31,14 +31,24 @@ namespace BrickadiaAutoPainter {
 			}
 		}
 
-		public BrickadiaColor ClosestColor(BrickadiaColor color) {
+		public BrickadiaColor ClosestColor(BrickadiaColor color, ColorSpaceSetting colorSpace) {
 			BrickadiaColor nearColor = default;
 			double colorDistance = double.MaxValue;
 
 			for (int x = 0; x < Colors.Count; x++) {
 				for (int y = 0; y < Colors[x].Count; y++) {
 					BrickadiaColor bColor = Colors[x][y];
-					double distance = BrickadiaColor.ColorDistance(bColor, color);
+					double distance = double.MaxValue;
+					
+					switch (colorSpace) {
+						case ColorSpaceSetting.sRGB:
+							distance = color.DistanceSrgb(bColor);
+							break;
+						case ColorSpaceSetting.Oklab:
+							distance = color.DistanceOklab(bColor);
+							break;
+					}
+
 					if (distance < colorDistance) {
 						nearColor = bColor;
 						colorDistance = distance;
@@ -49,7 +59,7 @@ namespace BrickadiaAutoPainter {
 			return nearColor;
 		}
 
-		public (int, int) ClosestColorPalettePosition(BrickadiaColor color) {
+		public (int, int) ClosestColorPalettePosition(BrickadiaColor color, ColorSpaceSetting colorSpace) {
 			int x = -1;
 			int y = -1;
 			double colorDistance = double.MaxValue;
@@ -57,7 +67,17 @@ namespace BrickadiaAutoPainter {
 			for (int colx = 0; colx < Colors.Count; colx++) {
 				for (int coly = 0; coly < Colors[colx].Count; coly++) {
 					BrickadiaColor bColor = Colors[colx][coly];
-					double distance = BrickadiaColor.ColorDistance(bColor, color);
+					double distance = double.MaxValue;
+
+					switch (colorSpace) {
+						case ColorSpaceSetting.sRGB:
+							distance = color.DistanceSrgb(bColor);
+							break;
+						case ColorSpaceSetting.Oklab:
+							distance = color.DistanceOklab(bColor);
+							break;
+					}
+
 					if (distance < colorDistance) {
 						x = colx;
 						y = coly;

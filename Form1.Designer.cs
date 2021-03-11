@@ -58,6 +58,7 @@ namespace BrickadiaAutoPainter {
 			this.label15 = new System.Windows.Forms.Label();
 			this.imageFile = new System.Windows.Forms.OpenFileDialog();
 			this.previewButton = new System.Windows.Forms.Button();
+			this.advancedSettingsButton = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.previewImageBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numBricksX)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numBricksY)).BeginInit();
@@ -407,10 +408,21 @@ namespace BrickadiaAutoPainter {
 			this.previewButton.UseVisualStyleBackColor = true;
 			this.previewButton.Click += new System.EventHandler(this.previewButton_Click);
 			// 
+			// advancedSettingsButton
+			// 
+			this.advancedSettingsButton.Location = new System.Drawing.Point(632, 358);
+			this.advancedSettingsButton.Name = "advancedSettingsButton";
+			this.advancedSettingsButton.Size = new System.Drawing.Size(156, 23);
+			this.advancedSettingsButton.TabIndex = 31;
+			this.advancedSettingsButton.Text = "Open advanced settings";
+			this.advancedSettingsButton.UseVisualStyleBackColor = true;
+			this.advancedSettingsButton.Click += new System.EventHandler(this.advancedSettingsButton_Click);
+			// 
 			// Form1
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(800, 421);
+			this.Controls.Add(this.advancedSettingsButton);
 			this.Controls.Add(this.previewButton);
 			this.Controls.Add(this.label15);
 			this.Controls.Add(this.label11);
@@ -443,6 +455,7 @@ namespace BrickadiaAutoPainter {
 			this.Controls.Add(this.colorPaletteName);
 			this.Controls.Add(this.colorPaletteBrowse);
 			this.Controls.Add(this.label1);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;
 			this.Name = "Form1";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -495,6 +508,8 @@ namespace BrickadiaAutoPainter {
 		private System.Windows.Forms.Button previewButton;
 		private System.Windows.Forms.Button iewButt;
 		private System.Windows.Forms.PictureBox Box;
+		private System.Windows.Forms.Button advancedSettingsButton;
+		private System.Windows.Forms.Button advanced;
 	}
 }
 
