@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static BrickadiaAutoPainter.Windows;
 
 namespace BrickadiaAutoPainter {
 	public partial class Form1 : Form {
@@ -131,6 +132,61 @@ namespace BrickadiaAutoPainter {
 
 		private void advancedSettingsButton_Click(object sender, EventArgs e) {
 			advancedSettingsForm.ShowDialog();
+		}
+
+		private void checkGridAlignment(object sender, EventArgs e) {
+			if (!topLeftPos.HasValue || !topRightPos.HasValue || !bottomLeftPos.HasValue || !bottomRightPos.HasValue) return;
+
+			int[] xs = new int[] { topLeftPos.Value.Item1, topRightPos.Value.Item1, bottomLeftPos.Value.Item1, bottomRightPos.Value.Item1 };
+			int[] ys = new int[] { topLeftPos.Value.Item2, topRightPos.Value.Item2, bottomLeftPos.Value.Item2, bottomRightPos.Value.Item2 };
+
+			int minX = Enumerable.Min(xs);
+			int minY = Enumerable.Min(ys);
+
+			int maxX = Enumerable.Max(xs);
+			int maxY = Enumerable.Max(ys);
+
+			int padding = 40; // padding to surround the cropped image with
+
+			Rectangle cropping = new Rectangle(minX - padding, minY - padding, maxX - minX + padding * 2, maxY - minY + padding * 2);
+
+			// take a screenshot AFTER minimizing the window
+			WindowState = FormWindowState.Minimized;
+			Thread.Sleep(500);
+			using Bitmap gameShot = ScreenCapture.CaptureWindow(Program.GetBrickadiaIntPtr());
+			WindowState = FormWindowState.Normal;
+
+			// add the grid
+			using Graphics graphics = Graphics.FromImage(gameShot);
+			SolidBrush gridMarkerBrush = new SolidBrush(Color.Gray);
+			SolidBrush cornerMarkerBrush = new SolidBrush(Color.Blue);
+
+			Action<Brush, int, int, int> drawPoint = (brush, x, y, r) => graphics.FillRectangle(brush, new Rectangle(x - r, y - r, r * 2, r * 2));
+
+			Perspective perspective = new Perspective(topLeftPos.Value, topRightPos.Value, bottomLeftPos.Value, bottomRightPos.Value);
+			int w = (int)numBricksX.Value;
+			int h = (int)numBricksY.Value;
+			for (int y = 0; y < w; y++) {
+				for (int x = 0; x < h; x++) {
+					double tx = x / (double)(w - 1);
+					double ty = y / (double)(h - 1);
+
+					(int, int) point = perspective.PointOn(tx, ty);
+					drawPoint(gridMarkerBrush, point.Item1, point.Item2, 2);
+				}
+			}
+
+			// and the corners
+			for (int i = 0; i < 4; i++)
+				drawPoint(cornerMarkerBrush, xs[i], ys[i], 5);
+
+			// finally crop the image
+			using Bitmap croppedGameShot = ScreenCapture.CropBitmap(gameShot, cropping);
+
+			// open the alignment form
+			GridAlignmentForm alignmentForm = new GridAlignmentForm();
+			alignmentForm.PictureBox.Image = croppedGameShot;
+			alignmentForm.ShowDialog();
 		}
 	}
 }

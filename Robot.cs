@@ -26,6 +26,10 @@ namespace BrickadiaAutoPainter {
 		private int paletteX = 0;
 		private int paletteY = 0;
 
+		public Perspective CreatePerspective() {
+			return new Perspective(TopLeft.Value, TopRight.Value, BottomLeft.Value, BottomRight.Value);
+		}
+
 		public void ChangePaletteColor((int, int) previous, (int, int) next) {
 			(int px, int py) = previous;
 			(int nx, int ny) = next;
@@ -83,14 +87,9 @@ namespace BrickadiaAutoPainter {
 		}
 
 		public void Paint() {
-			(int, int) topLeft = TopLeft.Value;
-			(int, int) topRight = TopRight.Value;
-			(int, int) bottomLeft = BottomLeft.Value;
-			(int, int) bottomRight = BottomRight.Value;
-
 			Dictionary<(int, int), List<(int, int)>> palettePixelPair = new Dictionary<(int, int), List<(int, int)>>();
 
-			Perspective perspective = new Perspective(topLeft, topRight, bottomLeft, bottomRight);
+			Perspective perspective = CreatePerspective();
 			using Bitmap bitmap = new Bitmap(Image, new Size(Width, Height));
 			for (int iy = 0; iy < bitmap.Height; iy++) {
 				for (int ix = 0; ix < bitmap.Width; ix++) {

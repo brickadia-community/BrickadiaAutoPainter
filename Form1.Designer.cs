@@ -59,6 +59,7 @@ namespace BrickadiaAutoPainter {
 			this.imageFile = new System.Windows.Forms.OpenFileDialog();
 			this.previewButton = new System.Windows.Forms.Button();
 			this.advancedSettingsButton = new System.Windows.Forms.Button();
+			this.checkGridButton = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.previewImageBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numBricksX)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numBricksY)).BeginInit();
@@ -131,16 +132,17 @@ namespace BrickadiaAutoPainter {
 			// 
 			// previewImageBox
 			// 
-			this.previewImageBox.Location = new System.Drawing.Point(488, 28);
+			this.previewImageBox.Location = new System.Drawing.Point(488, 32);
 			this.previewImageBox.Name = "previewImageBox";
 			this.previewImageBox.Size = new System.Drawing.Size(300, 300);
+			this.previewImageBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
 			this.previewImageBox.TabIndex = 6;
 			this.previewImageBox.TabStop = false;
 			// 
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(488, 7);
+			this.label2.Location = new System.Drawing.Point(488, 9);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(84, 15);
 			this.label2.TabIndex = 7;
@@ -363,7 +365,7 @@ namespace BrickadiaAutoPainter {
 			// 
 			// paintButton
 			// 
-			this.paintButton.Location = new System.Drawing.Point(713, 387);
+			this.paintButton.Location = new System.Drawing.Point(713, 409);
 			this.paintButton.Name = "paintButton";
 			this.paintButton.Size = new System.Drawing.Size(75, 23);
 			this.paintButton.TabIndex = 27;
@@ -374,7 +376,7 @@ namespace BrickadiaAutoPainter {
 			// label11
 			// 
 			this.label11.AutoSize = true;
-			this.label11.Location = new System.Drawing.Point(13, 395);
+			this.label11.Location = new System.Drawing.Point(13, 417);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(563, 15);
 			this.label11.TabIndex = 28;
@@ -400,7 +402,7 @@ namespace BrickadiaAutoPainter {
 			// 
 			// previewButton
 			// 
-			this.previewButton.Location = new System.Drawing.Point(632, 387);
+			this.previewButton.Location = new System.Drawing.Point(632, 409);
 			this.previewButton.Name = "previewButton";
 			this.previewButton.Size = new System.Drawing.Size(75, 23);
 			this.previewButton.TabIndex = 30;
@@ -410,7 +412,7 @@ namespace BrickadiaAutoPainter {
 			// 
 			// advancedSettingsButton
 			// 
-			this.advancedSettingsButton.Location = new System.Drawing.Point(632, 358);
+			this.advancedSettingsButton.Location = new System.Drawing.Point(632, 380);
 			this.advancedSettingsButton.Name = "advancedSettingsButton";
 			this.advancedSettingsButton.Size = new System.Drawing.Size(156, 23);
 			this.advancedSettingsButton.TabIndex = 31;
@@ -418,10 +420,21 @@ namespace BrickadiaAutoPainter {
 			this.advancedSettingsButton.UseVisualStyleBackColor = true;
 			this.advancedSettingsButton.Click += new System.EventHandler(this.advancedSettingsButton_Click);
 			// 
+			// checkGridButton
+			// 
+			this.checkGridButton.Location = new System.Drawing.Point(632, 351);
+			this.checkGridButton.Name = "checkGridButton";
+			this.checkGridButton.Size = new System.Drawing.Size(156, 23);
+			this.checkGridButton.TabIndex = 33;
+			this.checkGridButton.Text = "Check grid alignment";
+			this.checkGridButton.UseVisualStyleBackColor = true;
+			this.checkGridButton.Click += new System.EventHandler(this.checkGridAlignment);
+			// 
 			// Form1
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(800, 421);
+			this.ClientSize = new System.Drawing.Size(800, 441);
+			this.Controls.Add(this.checkGridButton);
 			this.Controls.Add(this.advancedSettingsButton);
 			this.Controls.Add(this.previewButton);
 			this.Controls.Add(this.label15);
@@ -505,6 +518,7 @@ namespace BrickadiaAutoPainter {
 		private System.Windows.Forms.OpenFileDialog imageFile;
 		private System.Windows.Forms.Button previewButton;
 		private System.Windows.Forms.Button advancedSettingsButton;
+		private System.Windows.Forms.Button checkGridButton;
 	}
 }
 
