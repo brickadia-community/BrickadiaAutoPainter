@@ -159,7 +159,8 @@ namespace BrickadiaAutoPainter {
 			this.dropdownSkipColors.Items.AddRange(new object[] {
             "Skip none",
             "Skip most frequent",
-            "Skip transparent"});
+            "Skip transparent",
+            "Delete most frequent"});
 			this.dropdownSkipColors.Location = new System.Drawing.Point(170, 127);
 			this.dropdownSkipColors.Name = "dropdownSkipColors";
 			this.dropdownSkipColors.Size = new System.Drawing.Size(165, 23);

@@ -1,9 +1,12 @@
-﻿using System;
+﻿using NHotkey;
+using NHotkey.WindowsForms;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace BrickadiaAutoPainter {
 	class Robot : IDisposable {
@@ -23,11 +26,47 @@ namespace BrickadiaAutoPainter {
 		public (int, int)? BottomLeft;
 		public (int, int)? BottomRight;
 
+		public bool Active = false;
+
+		public Form1 Form;
+
 		private int paletteX = 0;
 		private int paletteY = 0;
+		private bool usingHammer = false;
+
+		public bool Stop = false;
+		public bool Paused = false;
+
+		private List<KeyValuePair<(int, int), List<(int, int)>>> palettePixelPairs = default;
+		public int PairIndex = 0;
+		public int PairPixelIndex = 0;
+		private (int, int)? pairToDelete = null;
+		private (int, int) skippedColor = (0, 0);
 
 		public Perspective CreatePerspective() {
 			return new Perspective(TopLeft.Value, TopRight.Value, BottomLeft.Value, BottomRight.Value);
+		}
+
+		public int PixelsCompleted() {
+			int sum = 0;
+			for (int i = 0; i < PairIndex - 1; i++) {
+				sum += palettePixelPairs[i].Value.Count;
+			}
+			sum += PairPixelIndex;
+			return sum;
+		}
+
+		public int TotalPixels() {
+			return palettePixelPairs.Aggregate(0, (c, pair) => c + pair.Value.Count);
+		}
+
+		public void SetPaintProgress() {
+			if (palettePixelPairs == default) {
+				Form.SetPaintProgress(0);
+				return;
+			}
+
+			Form.SetPaintProgress(PixelsCompleted() / (double)TotalPixels());
 		}
 
 		public void ChangePaletteColor((int, int) previous, (int, int) next) {
@@ -86,7 +125,71 @@ namespace BrickadiaAutoPainter {
 			return preview;
 		}
 
+		public void PaintFromState() {
+			int startPairIndex = PairIndex;
+			for (; PairIndex < palettePixelPairs.Count; PairIndex++) {
+				KeyValuePair<(int, int), List<(int, int)>> pair = palettePixelPairs[PairIndex];
+				bool shouldBeDeleting = pairToDelete == pair.Key;
+
+				if (Stop || Paused) break;
+
+				ChangePaletteColor((paletteX, paletteY), pair.Key);
+				paletteX = pair.Key.Item1;
+				paletteY = pair.Key.Item2;
+				Thread.Sleep(AfterColorPickDelay);
+
+				if (PairIndex != startPairIndex) PairPixelIndex = 0;
+				for (; PairPixelIndex < pair.Value.Count; PairPixelIndex++) {
+					if (Stop || Paused) break;
+					(int, int) pixel = pair.Value[PairPixelIndex];
+					(int, int)? nextPixel = PairPixelIndex + 1 >= pair.Value.Count ? ((int, int)?)null : pair.Value[PairPixelIndex + 1];
+					bool nextPixelAdjacent = nextPixel.HasValue ? pixel.Item1 + 1 == nextPixel.Value.Item1 : false;
+
+					if (shouldBeDeleting && !usingHammer) {
+						// switch to hammer
+						Windows.KeyboardEvent(0x51, Window, ColorChangeDelay);
+						Thread.Sleep(ColorChangeDelay);
+						usingHammer = true;
+					}
+
+					if (!shouldBeDeleting && usingHammer) {
+						// switch back to paint
+						Windows.KeyboardEvent(69, Window, ColorChangeDelay);
+						Thread.Sleep(ColorChangeDelay);
+						usingHammer = false;
+					}
+
+					Windows.SetCursorPos(pixel.Item1, pixel.Item2);
+					Windows.MouseClick("left", 0);
+					Thread.Sleep(ColorPlaceDelay);
+
+					if (!nextPixelAdjacent || shouldBeDeleting) {
+						// don't release mouse if next pixel is adjacent
+						Windows.MouseClick("left", 1);
+						Thread.Sleep(ColorPlaceDelay);
+					}
+				}
+			}
+
+			if (SkipColors == SkipColorsSetting.MostFrequent && !Stop && !Paused)
+				ChangePaletteColor((paletteX, paletteY), skippedColor);
+
+			if (!Stop && !Paused) {
+				Active = false;
+				Form.SetWindowState(FormWindowState.Normal);
+			}
+
+			SetPaintProgress();
+		}
+
 		public void Paint() {
+			Stop = false;
+			Paused = false;
+			Active = true;
+			PairIndex = 0;
+			PairPixelIndex = 0;
+			SetPaintProgress();
+
 			Dictionary<(int, int), List<(int, int)>> palettePixelPair = new Dictionary<(int, int), List<(int, int)>>();
 
 			Perspective perspective = CreatePerspective();
@@ -113,31 +216,25 @@ namespace BrickadiaAutoPainter {
 				}
 			}
 
+			palettePixelPairs = palettePixelPair.ToList();
+
 			// handle skipping most frequent color
-			(int, int) skippedColor = (0, 0);
+			skippedColor = (0, 0);
 			if (SkipColors == SkipColorsSetting.MostFrequent) {
 				var pairsList = palettePixelPair.ToList();
 				pairsList.Sort((a, b) => b.Value.Count - a.Value.Count);
 				palettePixelPair.Remove(pairsList.First().Key);
 				skippedColor = pairsList.First().Key;
+			} else if (SkipColors == SkipColorsSetting.DeleteMostFrequent) {
+				var pairsList = palettePixelPair.ToList();
+				pairsList.Sort((a, b) => b.Value.Count - a.Value.Count);
+				palettePixelPair.Remove(pairsList.First().Key);
+				pairToDelete = pairsList.First().Key;
 			}
 
-			foreach (KeyValuePair<(int, int), List<(int, int)>> pair in palettePixelPair) {
-				ChangePaletteColor((paletteX, paletteY), pair.Key);
-				paletteX = pair.Key.Item1;
-				paletteY = pair.Key.Item2;
-				Thread.Sleep(AfterColorPickDelay);
-				foreach ((int, int) pixel in pair.Value) {
-					Windows.SetCursorPos(pixel.Item1, pixel.Item2);
-					Windows.MouseClick("left", 0);
-					Thread.Sleep(ColorPlaceDelay);
-					Windows.MouseClick("left", 1);
-					Thread.Sleep(ColorPlaceDelay);
-				}
-			}
-
-			if (SkipColors == SkipColorsSetting.MostFrequent)
-				ChangePaletteColor((paletteX, paletteY), skippedColor);
+			// painting needs to happen in a different thread to allow for keybinds to still work
+			Thread paintThread = new Thread(PaintFromState);
+			paintThread.Start();
 		}
 	}
 }

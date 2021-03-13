@@ -15,7 +15,8 @@ namespace BrickadiaAutoPainter {
 	public enum SkipColorsSetting {
 		None,
 		MostFrequent,
-		Transparent
+		Transparent,
+		DeleteMostFrequent
 	}
 
 	public partial class AdvancedSettingsForm : Form {

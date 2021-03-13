@@ -19,7 +19,11 @@ namespace BrickadiaAutoPainter {
 		}
 
 		public static Bitmap CropBitmap(Bitmap bitmap, Rectangle cropping) {
-			return bitmap.Clone(cropping, PixelFormat.Format32bppArgb);
+			Bitmap newBitmap = new Bitmap(cropping.Width, cropping.Height);
+			using (Graphics graphics = Graphics.FromImage(newBitmap)) {
+				graphics.DrawImage(bitmap, -cropping.X, -cropping.Y);
+				return newBitmap;
+			}
 		}
 	}
 }

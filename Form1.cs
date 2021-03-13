@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NHotkey.WindowsForms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,17 +25,71 @@ namespace BrickadiaAutoPainter {
 		private (int, int)? bottomRightPos;
 
 		private AdvancedSettingsForm advancedSettingsForm;
+		private Robot paintingRobot;
+		private delegate void SafeSetPaintProgress(int value);
+		private delegate void SafeSetWindowState(FormWindowState state);
 
 		public Form1() {
 			InitializeComponent();
 
 			advancedSettingsForm = new AdvancedSettingsForm();
+			registerHotkeys();
+		}
+
+		private void registerHotkeys() {
+			HotkeyManager.Current.AddOrReplace("Stop", Keys.Escape, (sender, e) => {
+				if (paintingRobot != null) {
+					paintingRobot.Stop = true;
+					paintingRobot.Active = false;
+					paintingRobot.SetPaintProgress();
+				}
+
+				e.Handled = true;
+			});
+
+			HotkeyManager.Current.AddOrReplace("Pause", Keys.F4, (sender, e) => {
+				if (paintingRobot != null) {
+					if (paintingRobot.Paused) {
+						// resume
+						paintingRobot.Paused = false;
+						if (paintingRobot.PairIndex != 0) paintingRobot.PairIndex--;
+						if (paintingRobot.PairPixelIndex != 0) paintingRobot.PairPixelIndex--;
+						new Thread(paintingRobot.PaintFromState).Start();
+					} else {
+						// pause
+						paintingRobot.Paused = true;
+						paintingRobot.SetPaintProgress();
+					}
+				}
+
+				e.Handled = true;
+			});
+		}
+
+		private void setPaintProgressSafe(int value) {
+			if (paintProgress.InvokeRequired)
+				paintProgress.Invoke(new SafeSetPaintProgress(setPaintProgressSafe), new object[] { value });
+			else
+				paintProgress.Value = value;
+		}
+
+		public void SetWindowState(FormWindowState state) {
+			if (InvokeRequired)
+				Invoke(new SafeSetWindowState(SetWindowState), new object[] { state });
+			else
+				WindowState = state;
+		}
+
+		public void SetPaintProgress(double value) {
+			setPaintProgressSafe((int)Math.Round(value * 100));
 		}
 
 		private Robot createRobot() {
 			PresetColorPaletteEntry entry = JsonConvert.DeserializeObject<PresetColorPaletteEntry>(File.ReadAllText(colorPaletteFile.FileName));
 
 			return new Robot {
+				Form = this,
+
 				ColorChangeDelay = advancedSettingsForm.ColorSwitchDelay,
 				ColorPlaceDelay = advancedSettingsForm.PixelPaintDelay,
 				AfterColorPickDelay = advancedSettingsForm.ColorSwitchedDelay,
@@ -121,13 +176,17 @@ namespace BrickadiaAutoPainter {
 		private void paintButton_Click(object sender, EventArgs e) {
 			if (!paletteSet || !imageSet) return;
 			if (!topLeftPos.HasValue || !topRightPos.HasValue || !bottomLeftPos.HasValue || !bottomRightPos.HasValue) return;
+			if (paintingRobot != null) {
+				if (paintingRobot.Active)
+					return;
 
-			using Robot robot = createRobot();
+				paintingRobot.Dispose();
+			}
+
+			paintingRobot = createRobot();
 			WindowState = FormWindowState.Minimized;
 			Thread.Sleep(2000);
-			robot.Paint();
-			Thread.Sleep(500);
-			WindowState = FormWindowState.Normal;
+			paintingRobot.Paint();
 		}
 
 		private void advancedSettingsButton_Click(object sender, EventArgs e) {
@@ -149,6 +208,8 @@ namespace BrickadiaAutoPainter {
 			int padding = 40; // padding to surround the cropped image with
 
 			Rectangle cropping = new Rectangle(minX - padding, minY - padding, maxX - minX + padding * 2, maxY - minY + padding * 2);
+			Rectangle screenBounds = Screen.FromHandle(Program.GetBrickadiaIntPtr()).Bounds;
+			cropping.Intersect(screenBounds);
 
 			// take a screenshot AFTER minimizing the window
 			WindowState = FormWindowState.Minimized;
@@ -158,10 +219,14 @@ namespace BrickadiaAutoPainter {
 
 			// add the grid
 			using Graphics graphics = Graphics.FromImage(gameShot);
-			SolidBrush gridMarkerBrush = new SolidBrush(Color.Gray);
-			SolidBrush cornerMarkerBrush = new SolidBrush(Color.Blue);
+			using SolidBrush gridMarkerBrush = new SolidBrush(Color.Gray);
+			using SolidBrush cornerMarkerBrush = new SolidBrush(Color.Blue);
 
-			Action<Brush, int, int, int> drawPoint = (brush, x, y, r) => graphics.FillRectangle(brush, new Rectangle(x - r, y - r, r * 2, r * 2));
+			Action<Brush, int, int, int> drawPoint = (brush, x, y, r) => {
+				int rx = Math.Max(0, Math.Min(screenBounds.Width - r, x));
+				int ry = Math.Max(0, Math.Min(screenBounds.Height - r, y));
+				graphics.FillRectangle(brush, new Rectangle(rx - r, ry - r, r * 2, r * 2));
+			};
 
 			Perspective perspective = new Perspective(topLeftPos.Value, topRightPos.Value, bottomLeftPos.Value, bottomRightPos.Value);
 			int w = (int)numBricksX.Value;

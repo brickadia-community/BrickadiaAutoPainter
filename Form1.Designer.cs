@@ -60,6 +60,7 @@ namespace BrickadiaAutoPainter {
 			this.previewButton = new System.Windows.Forms.Button();
 			this.advancedSettingsButton = new System.Windows.Forms.Button();
 			this.checkGridButton = new System.Windows.Forms.Button();
+			this.paintProgress = new System.Windows.Forms.ProgressBar();
 			((System.ComponentModel.ISupportInitialize)(this.previewImageBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numBricksX)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numBricksY)).BeginInit();
@@ -375,13 +376,12 @@ namespace BrickadiaAutoPainter {
 			// 
 			// label11
 			// 
-			this.label11.AutoSize = true;
-			this.label11.Location = new System.Drawing.Point(13, 417);
+			this.label11.Location = new System.Drawing.Point(13, 397);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(563, 15);
+			this.label11.Size = new System.Drawing.Size(414, 35);
 			this.label11.TabIndex = 28;
 			this.label11.Text = "When you have completed all steps, click the paint button in the bottom right. Th" +
-    "e window will minimize.";
+    "e window will minimize. Press F4 to pause/resume, press Esc to stop.";
 			// 
 			// label15
 			// 
@@ -430,10 +430,18 @@ namespace BrickadiaAutoPainter {
 			this.checkGridButton.UseVisualStyleBackColor = true;
 			this.checkGridButton.Click += new System.EventHandler(this.checkGridAlignment);
 			// 
+			// paintProgress
+			// 
+			this.paintProgress.Location = new System.Drawing.Point(452, 409);
+			this.paintProgress.Name = "paintProgress";
+			this.paintProgress.Size = new System.Drawing.Size(174, 23);
+			this.paintProgress.TabIndex = 34;
+			// 
 			// Form1
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(800, 441);
+			this.Controls.Add(this.paintProgress);
 			this.Controls.Add(this.checkGridButton);
 			this.Controls.Add(this.advancedSettingsButton);
 			this.Controls.Add(this.previewButton);
@@ -519,6 +527,7 @@ namespace BrickadiaAutoPainter {
 		private System.Windows.Forms.Button previewButton;
 		private System.Windows.Forms.Button advancedSettingsButton;
 		private System.Windows.Forms.Button checkGridButton;
+		private System.Windows.Forms.ProgressBar paintProgress;
 	}
 }
 
