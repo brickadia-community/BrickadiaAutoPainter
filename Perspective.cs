@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace BrickadiaAutoPainter {
-	class Perspective {
+	public class Perspective {
 		public int[] xs;
 		public int[] ys;
 		public double[] matrix;

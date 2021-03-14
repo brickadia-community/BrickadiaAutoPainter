@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Text;
 
 namespace BrickadiaAutoPainter {
-	struct BrickadiaColor {
+	public struct BrickadiaColor {
 		public static double ChannelToSrgb(double channel) =>
 			channel > 0.0031308 ? 1.055 * Math.Pow(channel, 1 / 2.4) - 0.055 : 12.92 * channel;
 

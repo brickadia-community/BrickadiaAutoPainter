@@ -28,6 +28,7 @@ namespace BrickadiaAutoPainter {
 		private Robot paintingRobot;
 		private delegate void SafeSetPaintProgress(int value);
 		private delegate void SafeSetWindowState(FormWindowState state);
+		private delegate void SafeCreateAndShowPostPaint(Robot robot);
 
 		public Form1() {
 			InitializeComponent();
@@ -82,6 +83,19 @@ namespace BrickadiaAutoPainter {
 
 		public void SetPaintProgress(double value) {
 			setPaintProgressSafe((int)Math.Round(value * 100));
+		}
+
+		public void CreateAndShowPostPaint(Robot robot) {
+			if (InvokeRequired) {
+				Invoke(new SafeCreateAndShowPostPaint(CreateAndShowPostPaint), new object[] { robot });
+				return;
+			}
+
+			PostPaintForm form = new PostPaintForm();
+			form.SetFromRobot(robot);
+			form.ShowDialog();
+			form.Dispose();
+			WindowState = FormWindowState.Normal;
 		}
 
 		private Robot createRobot() {
@@ -231,8 +245,8 @@ namespace BrickadiaAutoPainter {
 			Perspective perspective = new Perspective(topLeftPos.Value, topRightPos.Value, bottomLeftPos.Value, bottomRightPos.Value);
 			int w = (int)numBricksX.Value;
 			int h = (int)numBricksY.Value;
-			for (int y = 0; y < w; y++) {
-				for (int x = 0; x < h; x++) {
+			for (int y = 0; y < h; y++) {
+				for (int x = 0; x < w; x++) {
 					double tx = x / (double)(w - 1);
 					double ty = y / (double)(h - 1);
 
