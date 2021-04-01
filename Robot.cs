@@ -209,7 +209,7 @@ namespace BrickadiaAutoPainter {
 					Color rawColor = bitmap.GetPixel(ix, iy);
 					BrickadiaColor color = new BrickadiaColor(rawColor);
 
-					if (SkipColors == SkipColorsSetting.Transparent && rawColor.A > 127)
+					if (SkipColors == SkipColorsSetting.Transparent && rawColor.A < 127)
 						continue;
 
 					(int, int, double) colorData = Palette.ClosestColorPalettePositionWithDistance(color, ColorSpace);
